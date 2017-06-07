@@ -2,7 +2,7 @@
   <modal name="confirm-modal" :height="200">
     <div  class="confirm-modal-box">
       <div class="confirm-modal-message">
-        Please confirm, will random pick Travel Expense with <span>{{percent}}%</span> from year: <span>{{year}}</span>  month: <span>{{month}}</span>.
+        Please confirm, will random pick Travel Expense from company: <span>{{companyCode}}</span> with <span>{{percent}}%</span> from year: <span>{{year}}</span>  month: <span>{{month}}</span>.
       </div>
       <div class="confirm-modal-button-container">
         <button class="confirm-modal-button" v-on:click="confirmRandomPick">Confirm to Pick</button>
@@ -14,7 +14,7 @@
 <script>
   export default {
     name: 'PopupConfirm',
-    props: ['year','month','percent'],
+    props: ['year','month','percent', 'companyCode'],
     methods: {
       confirmRandomPick: function(){
         this.$emit('randompick');

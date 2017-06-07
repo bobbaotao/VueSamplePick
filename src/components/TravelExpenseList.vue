@@ -15,12 +15,20 @@
         </div>
         <div class="viewRandomPick" v-if="isRandomPickView === 'true'">
           click button will Random pick TE which are approved in year: {{year}} month: {{month}}<br />
+          select company:
+          <select v-model="selectedCompanyCode" v-on:change="changeCompanyCode">
+              <option v-for="companyItem in companyCodes" v-bind:value="companyItem">{{companyItem.codes}}</option>
+          </select>
           set percent (1-100):
             <input type="number" v-model="percent" min="1" max="100" />
             <button type="button" v-on:click="showConfirmWindow">Random Pick Travel Expense</button>
 
         </div>
         <div class="viewGetTE" v-else>
+            select company:
+            <select v-model="selectedCompanyCode" v-on:change="changeCompanyCode">
+                <option v-for="companyItem in companyCodes" v-bind:value="companyItem">{{companyItem.codes}}</option>
+            </select>
             select year:
             <select v-model="selectedYear">
                 <option>2016</option>
@@ -68,7 +76,7 @@
             <TravelExpenseItem v-for="item in items" v-bind:item="item" />
           </tbody>
         </table>
-      <PopupConfirm v-bind:year="year" v-bind:month="month" v-bind:percent="percent" v-on:randompick="confirmedPick">
+      <PopupConfirm v-bind:year="year" v-bind:month="month" v-bind:percent="percent" v-bind:companyCode="selectedCompanyCode.codes" v-on:randompick="confirmedPick">
 
       </PopupConfirm>
     </div>
@@ -107,7 +115,10 @@
           totalAmount: 0,
           totalPickedAmount: 0,
           detailItems: [],
-          isShowWindow: 'false'
+          isShowWindow: 'false',
+          //companyCodes: [],
+          companyCodes: [{codes: "0246", defaultPercent: "30"}],
+          selectedCompanyCode: {codes: "0246", defaultPercent: "30"}
         }
       },
       created: function() {
@@ -121,9 +132,13 @@
         this.selectedMonth = month;
         this.year = year;
         this.selectedYear = year;
+        this.loadCompanyCode();
       },
       components: {TravelExpenseItem, Spinner, PopupConfirm, ConfirmWindow},
       methods: {
+        changeCompanyCode: function() {
+          this.percent = this.selectedCompanyCode.defaultPercent;
+        },
         exportTravelExpense: function() {
           var csvContent = csvFormat(this.detailItems,
             ["TE_No","Title","EmployeeName","Location","IsOverSea",
@@ -151,7 +166,7 @@
             this.totalAmount = 0;
             this.totalPickedAmount = 0;
             const requestUrl =  "/_vti_bin/ZeissAPI/RandomTravelExpenseService.svc/GetTravelExpense/" + this.selectedYear + "/"
-             + this.selectedMonth + "?randomKey" + new Date().getMilliseconds();
+             + this.selectedMonth + "/" + this.selectedCompanyCode.codes + "?randomKey" + new Date().getMilliseconds();
             axios.get(requestUrl).then((response) => {
 
                 this.isLoading = 'false';
@@ -172,6 +187,22 @@
               this.message = error.description;
             });
         },
+        loadCompanyCode: function() {
+          this.isLoading = 'true';
+          const requestUrl = "/_vti_bin/ZeissAPI/RandomTravelExpenseService.svc/GetCompanyCodes";
+          axios.get(requestUrl).then((response) => {
+            this.isLoading = 'false';
+            if(response.status == 200 && response.data.GetCompanyCodesResult.status == "success") {
+              this.companyCodes = response.data.GetCompanyCodesResult.data;
+              this.selectedCompanyCode = this.companyCodes[0];
+            } else {
+              this.message = response.data.GetCompanyCodesResult.message;
+            }
+          }).catch((error) => {
+            this.isLoading = 'false';
+            this.message = error.description;
+          });
+        },
         randomPickTravelExpense: function() {
           this.isLoading = 'true';
           this.items = [];
@@ -181,7 +212,7 @@
           this.totalAmount = 0;
           this.totalPickedAmount = 0;
           const requestUrl ="/_vti_bin/ZeissAPI/RandomTravelExpenseService.svc/InitRandomTravelExpense/" + this.year
-          + "/" + this.month + "/" + this.percent + "?randomKey" + new Date().getMilliseconds();
+          + "/" + this.month + "/" + this.percent + "/" + this.selectedCompanyCode.codes + "?randomKey" + new Date().getMilliseconds();
           axios.get(requestUrl).then((response) => {
               this.isLoading = 'false';
             if(response.status == 200 && response.data.InitRandomTravelExpenseResult.status == "success"){
@@ -190,7 +221,7 @@
               this.totalNumber = response.data.InitRandomTravelExpenseResult.totalCount;
               this.pickedNumber = response.data.InitRandomTravelExpenseResult.pickedCount;
               this.totalPickedAmount = response.data.InitRandomTravelExpenseResult.totalPickedAmount.toFixed(2);
-              this.totalAmount = response.data.GetTravelExpenseResult.totalAmount.toFixed(2);
+              this.totalAmount = response.data.InitRandomTravelExpenseResult.totalAmount.toFixed(2);
               this.message = "";
               this.exportTravelExpense();
             } else {
