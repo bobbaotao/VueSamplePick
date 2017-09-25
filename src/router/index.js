@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import Hello from '@/components/Hello'
 import TravelExpenseList from '@/components/TravelExpenseList'
+import TEReport from '@/components/TEReport'
 
 Vue.use(Router)
 
@@ -12,11 +13,17 @@ export default new Router({
       name: 'TravelExpenseList',
       component: TravelExpenseList
     }
-    //,
-    // {
-    //   path: '/Hello',
-    //   name: 'Hello',
-    //   component: Hello
-    // }
+    ,
+    {
+      path: '/TEReport',
+      name: 'TEReport',
+      component: TEReport
+    }
+    ,
+    {
+      path: '/Hello',
+      name: 'Hello',
+      component: Hello
+    }
   ]
 })

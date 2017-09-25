@@ -16,7 +16,7 @@
     name: 'ConfirmWindow',
     props: ['year','month','percent'],
     methods: {
-      confirmRandomPick: function(){
+      confirmRandomPick: function() {
         this.$emit('randompick');
       },
       closeWindow: function(){

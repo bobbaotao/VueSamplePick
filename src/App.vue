@@ -1,9 +1,5 @@
 <template>
   <div id="app">
-    <p>
-      <!--<router-link to='/'>Home Page</router-link>-->
-      <!-- <router-link to='/'>Travel Expense List</router-link> -->
-    </p>
     <router-view></router-view>
   </div>
 </template>

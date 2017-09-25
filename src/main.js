@@ -4,8 +4,20 @@ import Vue from 'vue'
 import App from './App'
 import router from './router'
 import vmodal from 'vue-js-modal';
+import Element from 'element-ui';
+import 'element-ui/lib/theme-default/index.css';
+import locale from 'element-ui/lib/locale/lang/en';
+import axios from 'axios';
+import VueAxios from 'vue-axios';
+import VueClip from 'vue-clip';
+require('es6-promise').polyfill();
 
-Vue.config.productionTip = false;
+Vue.config.productionTip = false
+    //Vue.use(VueGoodTable);
+Vue.use(Element, { locale });
+Vue.use(VueAxios, axios);
+Vue.use(VueClip);
+
 Vue.use(vmodal);
 
 /* eslint-disable no-new */

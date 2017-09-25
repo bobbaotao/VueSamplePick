@@ -1,5 +1,8 @@
 <template>
   <div class="travelExpenseList">
+    <el-row>
+      <TopNav v-bind:activeIndex="navKey"></TopNav>
+    </el-row>
     <div class='modalLayout' v-if="isLoading === 'true'">
       <Spinner class="spinnerLoader"></Spinner>
     </div>
@@ -95,6 +98,7 @@
     import axios from 'axios';
     require('es6-promise').polyfill();
     import Spinner from 'vue-simple-spinner';
+    import TopNav from './TopNav'
 
     export default {
       name: 'travelExpenseList',
@@ -118,7 +122,8 @@
           isShowWindow: 'false',
           //companyCodes: [],
           companyCodes: [{codes: "0246", defaultPercent: "30"}],
-          selectedCompanyCode: {codes: "0246", defaultPercent: "30"}
+          selectedCompanyCode: {codes: "0246", defaultPercent: "30"},
+          navKey : 'Home'
         }
       },
       created: function() {
@@ -134,7 +139,7 @@
         this.selectedYear = year;
         this.loadCompanyCode();
       },
-      components: {TravelExpenseItem, Spinner, PopupConfirm, ConfirmWindow},
+      components: {TravelExpenseItem, Spinner, PopupConfirm, ConfirmWindow, TopNav},
       methods: {
         changeCompanyCode: function() {
           this.percent = this.selectedCompanyCode.defaultPercent;
